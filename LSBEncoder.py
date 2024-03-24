@@ -11,20 +11,21 @@ def encode(src, message, dest):
             with Image.open(input_path) as img:
                 img = Image.open(src, 'r')
                 width, height = img.size
-                #get pixel data
+                # get pixel data
                 array = np.array(list(img.getdata()))
 
                 if img.mode == 'RGB':
                     n = 3
                 elif img.mode == 'RGBA':
                     n = 4
-                total_pixels = array.size(n)
+                total_pixels = array.size//n
 
 
-                #RANDOMIZE PREAMBLE TO DETERMINE MESSAGE LENGTH
+                # ADD PREAMBLE TO DETERMINE MESSAGE LENGTH
                 message += "pr34mb13"
                 b_message = ''.join([format(ord(i), "08b") for i in message])
                 req_pixels = len(b_message)
+                
 
                 if req_pixels > total_pixels:
                     print("ERROR: Need larger file size")
