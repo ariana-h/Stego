@@ -22,11 +22,11 @@ def decode(input_path):
 
         message = ""
         for i in range(len(hidden_bits)):
-            if message[-8:] == "pr34mb13":
+            if message[8:] == "pr34mb13":
                 break
             else:
                 message += chr(int(hidden_bits[i], 2))
-        if "$t3g0" in message:
+        if "pr34mb13" in message:
             print("Hidden Message:", message[:-8])
         else:
             print("No Hidden Message Found")            

@@ -34,7 +34,7 @@ def encode(input_path, message, output_path):
             for p in range(total_pixels):
                 for q in range(0, 3):
                     if index < req_pixels:
-                        array[p][q] = int(bin(array[p][q])[2:9] + b_message[index], 2)
+                        array[p][q] = int(bin(array[p][q])[2:-1] + b_message[index], 2)
                         index += 1
 
             array=array.reshape(height, width, n)
