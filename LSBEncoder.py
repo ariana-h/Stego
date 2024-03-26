@@ -4,7 +4,6 @@ from PIL import Image
 
 def encode(input_path, message, output_path):
     with Image.open(input_path) as img:
-        img = Image.open(input_path, 'r')
         width, height = img.size
         # get pixel data
         array = np.array(list(img.getdata()))
@@ -28,16 +27,18 @@ def encode(input_path, message, output_path):
 
         if req_pixels > total_pixels:
             print("ERROR: Need larger file size")
-
         else:
+            
             index=0
             for p in range(total_pixels):
                 for q in range(0, 3):
                     if index < req_pixels:
-                        array[p][q] = int(bin(array[p][q])[2:-1] + b_message[index], 2)
+                        pixel_value = array[p][q]
+                        modified_pixel = (pixel_value & 0xFE) | int(b_message[index])
+                        array[p][q] = modified_pixel
                         index += 1
 
-            array=array.reshape(height, width, n)
+            array=array.reshape(height, width, n)     
             enc_img = Image.fromarray(array.astype('uint8'), img.mode)
             enc_img.save(output_path)
             print("Message hidden in:", output_path)
