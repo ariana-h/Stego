@@ -2,8 +2,13 @@ import os
 import numpy as np
 from PIL import Image
 
-def encode(input_path, message, output_path):
+def encode(input_path, message, output_path, convert_to_png=True):
     with Image.open(input_path) as img:
+        if convert_to_png:
+            # convert JPG ang JPEG to PNG to ensure lossless encoding
+            if output_path.lower().endswith(('.jpg', '.jpeg')):
+                output_path = output_path.rsplit('.', 1)[0] + '.png'
+                
         width, height = img.size
         # get pixel data
         array = np.array(list(img.getdata()))
