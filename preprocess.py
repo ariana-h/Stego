@@ -3,7 +3,7 @@ from PIL import Image
 import shutil
 
 
-def convert_to_png(source_folder):
+def convert_to_png(source_folder, output_size=(128, 128)):
     for filename in os.listdir(source_folder):
         if filename.lower().endswith(('.jpg', '.jpeg')):
             img_path = os.path.join(source_folder, filename)
@@ -11,6 +11,8 @@ def convert_to_png(source_folder):
             png_path = os.path.splitext(img_path)[0] + '.png'
             img.save(png_path, 'PNG')
             os.remove(img_path)
+            resized_img = img.resize(output_size)
+            resized_img.save(png_path)
             
 
 def copy_dataset(source_folder, dest_folder):
