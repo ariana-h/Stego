@@ -13,14 +13,17 @@ def resize_image(input_folder, output_folder, size=(256, 256)):
 
 
 def main():
-    input_folder = "images" 
+    input_folder = "dataset/stego" # "images" 
     
-    if not os.path.exists('resized'):
-        os.makedirs('resized') 
+    # if not os.path.exists('resized'):
+        # os.makedirs('resized') 
         
-    output_folder = 'resized'  
+    output_folder = "dataset/stego" # 'resized'  
     
+    print("Resizing images...")
     resize_image(input_folder, output_folder)
+    
+    print("Completed")
     
     
 if __name__ == "__main__":

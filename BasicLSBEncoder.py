@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from PIL import Image
+import random
 
 def encode(input_path, message, output_path, convert_to_png=True):
     with Image.open(input_path) as img:
@@ -21,7 +22,7 @@ def encode(input_path, message, output_path, convert_to_png=True):
 
         # print binary message
         binary = ''.join([format(ord(i), "08b") for i in message])
-        print("Messgage in binary:", binary)
+        print("Message in binary:", binary)
 
         # ADD PREAMBLE TO DETERMINE MESSAGE LENGTH
         message += "pr34mb13"
@@ -49,6 +50,12 @@ def encode(input_path, message, output_path, convert_to_png=True):
             print("Message hidden in:", output_path)
 
 
+def generate_random_message(word_count=5):
+    words = ["hello", "world", "encode", "message", "image", "random", "text", "secret", "hidden"]
+    message = ' '.join(random.choices(words, k=word_count))
+    return message
+
+
 def main():
     src = "resized"
 
@@ -56,14 +63,17 @@ def main():
         os.makedirs('encoded') 
     dest = "encoded"
 
-    print("Enter a message to encode:")
-    message = input()
+    # encode a specific message
+    # print("Enter a message to encode:")
+    # message = input()
 
 
     for file in os.listdir(src):
         if file.lower().endswith(('.png', '.jpg', '.jpeg')): 
             input_path = os.path.join(src, file) 
             output_path = os.path.join(dest, file) 
+            message = generate_random_message()
+            print(f"Encoding message: \"{message}\" in {file}")
             encode(input_path, message, output_path)
 
 if __name__ == "__main__":

@@ -1,3 +1,7 @@
 images/
 resized/
 encoded/
+
+dataset/
+data/
+best_model.h5
