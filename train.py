@@ -1,12 +1,14 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models
-from tensorflow.keras.callbacks import Callback, LearningRateScheduler
+from tensorflow.keras.callbacks import Callback
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score, roc_curve
+import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 import os
 
-IMAGE_SIZE = (128, 128) 
+IMAGE_SIZE = (128, 128)
 BATCH_SIZE = 32
 EPOCHS = 50 # 30
 
@@ -36,8 +38,6 @@ class SaveBestModel(Callback):
 
 def read_image(image_path):
     image = cv2.imread(image_path)
-    # image = cv2.resize(image, IMAGE_SIZE)  # Resize image
-    # image = image / 255.0  # Normalize pixel values
     return image
 
 def load_data(data_dir):
@@ -107,7 +107,6 @@ def unet_model(input_shape):
     conv7 = layers.Conv2D(16, (3, 3), padding='same')(leaky_relu13)
     leaky_relu14 = layers.LeakyReLU(alpha=0.2)(conv7) 
 
-    
     flatten = layers.Flatten()(leaky_relu14)
     outputs = layers.Dense(1, activation='sigmoid')(flatten)
 
@@ -115,20 +114,42 @@ def unet_model(input_shape):
 
     return model
 
-input_shape = (IMAGE_SIZE[0], IMAGE_SIZE[1], 3) 
+input_shape = (IMAGE_SIZE[0], IMAGE_SIZE[1], 3)
 model = unet_model(input_shape)
+
 
 model.compile(optimizer='adam',
               loss= 'binary_crossentropy',
-              metrics=['accuracy'])
+              metrics=['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall()])
 
 model.summary()
 
 model_checkpoint = SaveBestModel(filepath='best_model.h5', save_best_only=True)
 
-model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_data=(X_test, y_test), callbacks=[model_checkpoint])#, lr_scheduler])
 
-test_loss, test_acc = model.evaluate(X_test, y_test)
-print(f'Test accuracy: {test_acc}')
+model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_data=(X_test, y_test), callbacks=[model_checkpoint])
+
 
 best_model = models.load_model('best_model.h5')
+
+test_loss, test_acc, test_precision, test_recall = best_model.evaluate(X_test, y_test)
+y_pred = best_model.predict(X_test)
+roc_auc = roc_auc_score(y_test, y_pred)  # Calculate ROC AUC score
+fpr, tpr, thresholds = roc_curve(y_test, y_pred)
+
+# Plot ROC curve
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, label=f'AUC = {roc_auc:.4f}')
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic (ROC) Curve')
+plt.legend(loc='lower right')
+plt.grid(True)
+plt.show()
+
+
+print(f'Test accuracy: {test_acc}')
+print(f'Test precision: {test_precision}')
+print(f'Test recall: {test_recall}')
+print(f'ROC AUC score: {roc_auc}')
