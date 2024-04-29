@@ -4,18 +4,17 @@ import numpy as np
 import cv2
 from PIL import Image
 
-total_pos = 0
-total_neg = 0
-tp = 0
-fp = 0
-tn = 0
-fn = 0
+total_pos, total_neg, tp, fp, tn, fn = 0, 0, 0, 0, 0, 0
 
 model = tf.keras.models.load_model('best_model.h5')
 
 def preprocess_image(image_path):
     image = cv2.imread(image_path)
     return image
+
+def log(message):
+    with open("output_log.txt", "a") as file:
+        file.write(message + "\n")
 
 def detect_message(image_path):
     global total_pos, total_neg, tp, fp, tn, fn
@@ -25,29 +24,28 @@ def detect_message(image_path):
     
     prediction = model.predict(preprocessed_image)
     
-    
 
     if prediction[0][0] > 0.5:
-        # print(f"Steganography detected in {image_path}")
+        log(f"Steganography detected in {image_path}")
         total_pos += 1
         if 'non-stego' in image_path:
             fp += 1 
-            # print("False positive:", fp, "/", total_pos)
+            log(f"False positive: {fp} / {total_pos}")
         else:
             tp += 1
-            # print("True positive:", tp, "/", total_pos)
+            log(f"True positive: {tp} / {total_pos}")
         decode(image_path)
         
     else:
-        # print(f"No message detected in {image_path}")
+        log(f"No message detected in {image_path}")
         total_neg += 1
         if 'non-stego' in image_path:
             tn += 1
-            # print("True negative:", tn, "/", total_neg)
+            log(f"True negative: {tn} / {total_neg}")
         else:
             fn += 1
-            # print("False negative:", fn, "/", total_neg)
-            ## decode(image_path)
+            log(f"False negative: {fn} / {total_neg}")
+            decode(image_path) 
             
 
 def iterate_files(folder_path):
@@ -76,20 +74,25 @@ def decode(input_path):
                 break
             else:
                 message += chr(int(hidden_bytes[i], 2))
-        # if "pr34mb13" in message:
-            # print("Hidden Message:", message[:-8])
-        # else:
-            # print("No Hidden Message Found")   
+        if "pr34mb13" in message:
+            log(f"Hidden Message: {message[:-8]}")
+        else:  
+            log(f"No Hidden Message Found")  
             
 
 def main():
     stego_folder = "dataset/test/stego"
     non_stego_folder = "dataset/test/non-stego"
+    
+    if os.path.exists("output_log.txt"):
+        os.remove("output_log.txt")
 
     print("Detecting steganography in stego images:")
+    log("Detecting steganography in stego images:")
     iterate_files(stego_folder)
 
     print("\nDetecting steganography in non-stego images:")
+    log("\nDetecting steganography in non-stego images:")
     iterate_files(non_stego_folder)
 
     accuracy = (tp+tn)/(total_pos+total_neg)
