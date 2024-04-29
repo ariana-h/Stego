@@ -1,7 +1,6 @@
-images/
-resized/
-encoded/
-
+LSBDemo/resized/
+LSBDemo/encoded/
 dataset/
 data/
 best_model.h5
+output_log.txt
