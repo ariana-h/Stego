@@ -22,10 +22,10 @@ Run the following scripts in order:
 - `BasicLSBDecoder.py`
 
 **Original:**  
-![alt text](LSBDemo/resized/2.JPG)  
+![alt text](example/2.JPG)  
 
 **Encoded:**  
-![alt text](LSBDemo/encoded/2.png)
+![alt text](example/2.png)
 
 ## Preprocess Data
 Download a dataset of images or use the one referenced for this project at https://www.kaggle.com/datasets/pankajkumar2002/random-image-sample-dataset. Unzip the dataset into your current repository. You should now see a `data` folder in your repository.
@@ -50,6 +50,8 @@ The script will produce a more detailed output file, called `output_log.txt`, th
 
 ### Other
 The `image_difference.py` script will show a visual difference between the pixels of the original and the encoded image. A randomly selected image was used to test.
+
+![alt text](example/binary_difference.png)
 
 ## Dependencies
 - Python 3.10
