@@ -71,7 +71,7 @@ To install cuda:
 To install tensorflow:  
 - `pip install "tensorflow<2.11"`
 
-Find the folder where your environment is located (can be found by running `conda env list` in your terminal). Inside this folder, under    `etc\conda\activate.d`, create a file `env_vars.bat`. If the folder path does not exist under your environment, copy this to a different file and move it in.
+Find the folder where your environment is located (can be found by running `conda env list` in your terminal). Inside this folder, under `etc\conda\activate.d`, create a file `env_vars.bat`. If the folder path does not exist under your environment, copy this to a different file and move it in.
 
 >@echo off
 for /f "delims=" %%a in ('python -c "import nvidia.cudnn;print(nvidia.cudnn.__file__)"') do @set CUDNN_FILE=%%a
