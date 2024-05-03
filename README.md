@@ -6,7 +6,7 @@ SUNY Polytechnic Institute
 Spring 2024
 
 ## Objective
-The goal is to employ widely available techniques and customized AI models for embedding secret data within images using image steganography. Further, this project aims to explore AI's role in cybersecurity, particularly in the area of image steganalysis, to determine whether a network can detect the presence of hidden data within a carrier image (the resulting image after stenography has been applied). This will involve assessing the network's accuracy in detecting hidden messages with the methods used and attempting to decode the embedded data when feasible.
+The goal is to employ widely available techniques and customized AI models for embedding secret data within images using image steganography. Further, this project aims to explore AI's role in cybersecurity, particularly in the area of image steganalysis, to determine whether a network can detect the presence of hidden data within a carrier image (the resulting image after steganography has been applied). This will involve assessing the network's accuracy in detecting hidden messages with the methods used and attempting to decode the embedded data when feasible.
 
 ## Datasets
 The images used for the Basic LSB Encoder and Decoder were personally obtained.
