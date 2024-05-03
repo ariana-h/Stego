@@ -10,7 +10,7 @@ import os
 
 IMAGE_SIZE = (128, 128)
 BATCH_SIZE = 32
-EPOCHS = 50 # 30
+EPOCHS = 50
 
 class SaveBestModel(Callback):
     def __init__(self, monitor='val_accuracy', filepath='best_model.h5', save_best_only=True):
@@ -60,7 +60,7 @@ X_train, X_test, y_train, y_test = train_test_split(images, labels, test_size=0.
 def unet_model(input_shape):
     inputs = layers.Input(shape=input_shape)
 
-    # Contracting path (Encoder)
+    # Downsampling (Encoder)
     conv1 = layers.Conv2D(32, (3, 3), padding='same')(inputs)
     leaky_relu1 = layers.LeakyReLU(alpha=0.2)(conv1)
     conv1 = layers.Conv2D(32, (3, 3), padding='same')(leaky_relu1)
@@ -85,7 +85,7 @@ def unet_model(input_shape):
     conv4 = layers.Conv2D(256, (3, 3), padding='same')(leaky_relu7)
     leaky_relu8 = layers.LeakyReLU(alpha=0.2)(conv4) 
 
-    # Expansive path (Decoder)
+    # Upsampling (Decoder)
     up5 = layers.Conv2DTranspose(128, (2, 2), strides=(2, 2), padding='same')(leaky_relu8)
     up5 = layers.concatenate([up5, conv3], axis=-1)
     conv5 = layers.Conv2D(64, (3, 3), padding='same')(up5)
@@ -129,13 +129,24 @@ model_checkpoint = SaveBestModel(filepath='best_model.h5', save_best_only=True)
 
 model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_data=(X_test, y_test), callbacks=[model_checkpoint])
 
-
 best_model = models.load_model('best_model.h5')
 
-test_loss, test_acc, test_precision, test_recall = best_model.evaluate(X_test, y_test)
+train_loss, train_acc, train_precision, train_recall = best_model.evaluate(X_train, y_train)
+
+val_loss, val_acc, val_precision, val_recall = best_model.evaluate(X_test, y_test)
 y_pred = best_model.predict(X_test)
 roc_auc = roc_auc_score(y_test, y_pred)  # Calculate ROC AUC score
 fpr, tpr, thresholds = roc_curve(y_test, y_pred)
+
+print('========================================')
+print(f'Training accuracy: {train_acc}')
+print(f'Training precision: {train_precision}')
+print(f'Training recall: {train_recall}')
+print('----------------------------------------')
+print(f'Validation accuracy: {val_acc}')
+print(f'Validation precision: {val_precision}')
+print(f'Validation recall: {val_recall}')
+print(f'ROC AUC score: {roc_auc}')
 
 # Plot ROC curve
 plt.figure(figsize=(8, 6))
@@ -147,9 +158,3 @@ plt.title('Receiver Operating Characteristic (ROC) Curve')
 plt.legend(loc='lower right')
 plt.grid(True)
 plt.show()
-
-
-print(f'Test accuracy: {test_acc}')
-print(f'Test precision: {test_precision}')
-print(f'Test recall: {test_recall}')
-print(f'ROC AUC score: {roc_auc}')
